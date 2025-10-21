@@ -12,7 +12,7 @@ export const summarize: Command = {
     console.log("Comando !resumir executado");
 
     const quantidade = parseInt(ctx.args[0]) || 10;
-
+  
     if (quantidade < 5 || quantidade > 100) {
       await ctx.reply(
         "❌ *Quantidade inválida!*\n\n" +
@@ -59,9 +59,9 @@ export const summarize: Command = {
       console.log("Resumo gerado!");
 
       await ctx.reply(
-        `*RESUMO DAS ÚLTIMAS ${textos.length} MENSAGENS: *\n\n` +
+        `*RESUMO DAS ÚLTIMAS ${textos.length} MENSAGENS:*\n\n` +
           `${resumo} \n\n` +
-          `_Resumo gerado por IA do Tiaguinho_`
+          `_Resumo gerado por Feme bot_`
       );
       await ctx.chat.clearState();
     } catch (error) {

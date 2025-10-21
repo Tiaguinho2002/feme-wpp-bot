@@ -1,7 +1,6 @@
 import { Command, CommandContext } from "../types/command.js";
 import { GroupChat } from "whatsapp-web.js";
 import pkg from "whatsapp-web.js";
-const { Client, LocalAuth } = pkg;
 const { MessageMedia } = pkg;
 
 export const everyone: Command = {

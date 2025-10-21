@@ -5,7 +5,6 @@ dotenv.config();
 
 const ai = new GoogleGenAI({});
 
-
 // LLMs para parte do fullPrompt
 export async function clientGemini(prompt: string): Promise<string> {
   if (!prompt || prompt.trim().length === 0) {
@@ -43,3 +42,5 @@ Usuário: ${prompt}
     return "Ocorreu um erro interno ao processar sua solicitação.";
   }
 }
+
+

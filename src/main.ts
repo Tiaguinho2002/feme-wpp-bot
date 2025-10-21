@@ -4,11 +4,13 @@ import { help } from "./commands/help.js";
 import { stiker } from "./commands/stiker.js";
 import { summarize } from "./commands/summarize.js";
 import { everyone } from "./commands/everyone.js";
+import { whoIsRight } from "./commands/whoIsRight.js";
 
 import { Command, CommandContext } from "./types/command.js";
 import { clientGemini } from "./services/gemini.js";
 
 import dotenv from "dotenv";
+import { englishMode } from "./commands/englishMode.js";
 
 dotenv.config();
 
@@ -19,6 +21,8 @@ const commands = new Map<string, Command>([
   [stiker.name, stiker],
   [summarize.name, summarize],
   [everyone.name, everyone],
+  [whoIsRight.name, whoIsRight],
+  [englishMode.name, englishMode]
 ]);
 
 const client = new Client({
