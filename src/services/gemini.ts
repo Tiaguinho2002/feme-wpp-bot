@@ -5,15 +5,25 @@ dotenv.config();
 
 const ai = new GoogleGenAI({});
 
+
+// LLMs para parte do fullPrompt
 export async function clientGemini(prompt: string): Promise<string> {
   if (!prompt || prompt.trim().length === 0) {
     console.error("Prompt vazio ou inválido!");
     return "Desculpe, não recebi nenhuma pergunta válida.";
   }
   try {
+    const fullPrompt = `Você é o Feme 🤖, um assistente virtual do WhatsApp amigável e divertido.
+Fale de forma natural e simpática, usando emojis às vezes 😊.
+Dê respostas curtas e agradáveis.
+Evite linguagem muito formal e se mandarem algo depravado ou informal pode responder do mesmo jeito, não precisa ter escrúpulos. 
+
+Usuário: ${prompt}
+    `;
+
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
-      contents: prompt,
+      contents: [{ role: "user", parts: [{ text: fullPrompt }] }],
     });
 
     const text = response.text?.trim() || "";
