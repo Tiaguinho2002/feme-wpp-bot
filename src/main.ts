@@ -5,12 +5,12 @@ import { stiker } from "./commands/stiker.js";
 import { summarize } from "./commands/summarize.js";
 import { everyone } from "./commands/everyone.js";
 import { whoIsRight } from "./commands/whoIsRight.js";
-
 import { Command, CommandContext } from "./types/command.js";
-import { clientGemini } from "./services/gemini.js";
+
 
 import dotenv from "dotenv";
-import { englishMode } from "./commands/englishMode.js";
+import { GeminiService } from "./services/GeminiService.js";
+
 
 dotenv.config();
 
@@ -22,7 +22,6 @@ const commands = new Map<string, Command>([
   [summarize.name, summarize],
   [everyone.name, everyone],
   [whoIsRight.name, whoIsRight],
-  [englishMode.name, englishMode]
 ]);
 
 const client = new Client({
@@ -70,7 +69,8 @@ client.on("message_create", async (msg) => {
           await chat.sendStateTyping();
 
           try {
-            const aiResponse = await clientGemini(prompt);
+            const geminiService = new GeminiService();
+            const aiResponse = await geminiService.generateResponse(prompt);
             console.log(`✅ Resposta da IA: "${aiResponse}"`);
 
             if (!aiResponse || aiResponse.trim().length === 0) {

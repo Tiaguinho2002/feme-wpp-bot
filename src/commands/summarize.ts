@@ -1,5 +1,6 @@
-import { clientGemini } from "../services/gemini.js";
 import { Command, CommandContext } from "../types/command.js";
+import { GeminiService } from "../services/GeminiService.js";
+import { prompts } from "../prompts.js";
 import pkg from "whatsapp-web.js";
 const { MessageMedia } = pkg;
 
@@ -12,7 +13,7 @@ export const summarize: Command = {
     console.log("Comando !resumir executado");
 
     const quantidade = parseInt(ctx.args[0]) || 10;
-  
+
     if (quantidade < 5 || quantidade > 100) {
       await ctx.reply(
         "❌ *Quantidade inválida!*\n\n" +
@@ -49,13 +50,12 @@ export const summarize: Command = {
 
       const conversaCompleta = textos.join("\n");
 
-      const prompt = `Resuma a seguinte conversa de WhatsApp de forma clara e objetiva, destacando os pontos principais e decisões importantes, porém quero um resumo de verdade
-      visando ter apenas no maximo 1400 caracteres para o resumo
-      :\n\n${conversaCompleta}\n\nResumo:`;
+      const prompt = prompts.summarize(conversaCompleta);
 
       console.log("🤖 Enviando para IA...");
 
-      const resumo = await clientGemini(prompt);
+      const geminiService = new GeminiService();
+      const resumo = await geminiService.generateResponse(prompt);
       console.log("Resumo gerado!");
 
       await ctx.reply(
