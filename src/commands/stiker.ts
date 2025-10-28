@@ -10,7 +10,6 @@ export const stiker: Command = {
   async run(ctx: CommandContext): Promise<void> {
     console.log("🎨 Comando !figurinha executado");
 
-    // Verifica se está respondendo uma mensagem
     if (!ctx.msg.hasQuotedMsg) {
       await ctx.reply(
         "❌ *Como usar:*\n\n" +
@@ -23,7 +22,6 @@ export const stiker: Command = {
 
     console.log("✅ Mensagem tem quote");
 
-    // Pega a mensagem respondida
     const quotedMsg = await ctx.msg.getQuotedMessage();
 
     if (!quotedMsg.hasMedia) {
@@ -48,7 +46,7 @@ export const stiker: Command = {
 
       console.log("✅ É uma imagem! Criando figurinha...");
 
-      // Cria a figurinha
+      // create sticker
       await ctx.msg.reply(media, undefined, {
         sendMediaAsSticker: true,
         stickerAuthor: "Bot do Tiaguinho 🤖",

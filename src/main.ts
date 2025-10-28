@@ -5,12 +5,14 @@ import { stiker } from "./commands/stiker.js";
 import { summarize } from "./commands/summarize.js";
 import { everyone } from "./commands/everyone.js";
 import { whoIsRight } from "./commands/whoIsRight.js";
+import {
+  englishMode,
+  handleEnglishModeMessage,
+} from "./commands/englishMode.js";
 import { Command, CommandContext } from "./types/command.js";
-
 
 import dotenv from "dotenv";
 import { GeminiService } from "./services/GeminiService.js";
-
 
 dotenv.config();
 
@@ -22,6 +24,7 @@ const commands = new Map<string, Command>([
   [summarize.name, summarize],
   [everyone.name, everyone],
   [whoIsRight.name, whoIsRight],
+  [englishMode.name, englishMode],
 ]);
 
 const client = new Client({
@@ -39,8 +42,17 @@ client.on("ready", () => {
 client.on("message_create", async (msg) => {
   const text = msg.body || "";
   const chat = await msg.getChat();
+  const contact = await msg.getContact();
 
-  // PRIORIDADE: Verifica menções (IA)
+  const ctx: CommandContext = {
+    msg,
+    chat,
+    contact,
+    args: text.split(/\s+/).slice(1), // empty initial arguments
+    reply: (t) => msg.reply(t),
+  };
+
+  // Priority 1: Verify mentions
   if (text.includes("@") && chat.isGroup) {
     try {
       const mentions = await msg.getMentions();
@@ -48,7 +60,6 @@ client.on("message_create", async (msg) => {
       if (mentions && mentions.length > 0) {
         console.log(`✅ ${mentions.length} menção(ões) detectada(s)`);
 
-        // Verifica se o BOT foi mencionado
         const botMentioned = mentions.some(
           (mention) => mention.id.user === botNumber
         );
@@ -56,7 +67,7 @@ client.on("message_create", async (msg) => {
         if (botMentioned) {
           console.log("🤖 Bot foi mencionado!");
 
-          // Remove a menção antes de enviar para IA
+          // Remove @
           const prompt = text.replace(/@\d+/g, "").trim();
 
           console.log(`📝 Prompt limpo: "${prompt}"`);
@@ -94,7 +105,14 @@ client.on("message_create", async (msg) => {
     }
   }
 
-  // Processa comandos normais (com !)
+  // Priority 2
+  const wasHandledByEnglishMode = await handleEnglishModeMessage(ctx);
+
+  if (wasHandledByEnglishMode) {
+    return;
+  }
+
+  // Priority 3:
   if (!text.startsWith(PREFIX)) {
     return;
   }
@@ -102,21 +120,14 @@ client.on("message_create", async (msg) => {
   const [cmdName, ...args] = text.split(/\s+/);
   console.log(`⚙️ Comando: ${cmdName}`);
 
-  const contact = await msg.getContact();
-
   const cmd = commands.get(cmdName);
   if (!cmd) {
     await msg.reply("Comando não encontrado");
     return;
   }
 
-  const ctx: CommandContext = {
-    msg,
-    chat,
-    contact,
-    args,
-    reply: (t) => msg.reply(t),
-  };
+  // Updates args in context
+  ctx.args = args;
 
   try {
     await cmd.run(ctx);

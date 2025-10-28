@@ -13,3 +13,4 @@ export interface Command {
   description: string;
   run: (context: CommandContext) => Promise<void>;
 }
+

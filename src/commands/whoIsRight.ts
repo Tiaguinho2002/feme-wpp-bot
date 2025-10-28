@@ -4,7 +4,7 @@ import { prompts } from "../prompts.js";
 import pkg from "whatsapp-web.js";
 const { MessageMedia } = pkg;
 
-// usado LLM (Large Language Model) no prompt
+// LLM (Large Language Model) in the prompt
 export const whoIsRight: Command = {
   name: "!quem-ta-certo",
   description:
