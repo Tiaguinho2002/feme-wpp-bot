@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: meu-app-node
+    restart: unless-stopped
+    ports:
+      - "3000:3000"  
+    environment:
+      - NODE_ENV=production
+
+    volumes:
+      - ./.wwebjs_auth:/app/.wwebjs_auth
+      - ./.wwebjs_cache:/app/.wwebjs_cache
+    # Configuração de logs (opcional)
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
