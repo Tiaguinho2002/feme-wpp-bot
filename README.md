@@ -34,14 +34,35 @@ Um assistente automatizado para WhatsApp que integra **IA generativa do Google G
 
 ```
 feme-bot/
-├── src/              # Código-fonte principal (TypeScript)
-├── dist/             # Código compilado
-├── Dockerfile        # Configuração da imagem Docker
-├── docker-compose.yml# Orquestração de containers
-├── package.json      # Dependências e scripts
-├── tsconfig.json     # Configuração TypeScript
-├── .env              # Variáveis de ambiente (ex: GEMINI_API_KEY)
-└── LICENSE           # Licença MIT
+├── src/                     # Código-fonte principal (TypeScript)
+│   ├── commands/            # Comandos do bot
+│   │   ├── englishMode.ts
+│   │   ├── everyone.ts
+│   │   ├── help.ts
+│   │   ├── stiker.ts
+│   │   ├── summarize.ts
+│   │   └── whosRight.ts
+│   │
+│   ├── services/            # Serviços externos e integrações
+│   │   └── GeminiService.ts
+│   │
+│   ├── types/               # Tipagens e interfaces TypeScript
+│   │   ├── command.ts
+│   │   └── main.ts
+│   │
+│   └── prompts.ts           # Prompts e textos utilizados pelo bot
+│
+├── dist/                    # Código compilado (JavaScript)
+├── Dockerfile               # Configuração da imagem Docker
+├── docker-compose.yml       # Orquestração de containers
+├── package.json             # Dependências e scripts
+├── package-lock.json        # Versões exatas das dependências
+├── tsconfig.json            # Configuração TypeScript
+├── .env                     # Variáveis de ambiente (ex: GEMINI_API_KEY)
+├── .dockerignore            # Arquivos ignorados pelo Docker
+├── .gitignore               # Arquivos ignorados pelo Git
+├── LICENSE                  # Licença MIT
+└── README.md                # Documentação do projeto
 ```
 
 ---
