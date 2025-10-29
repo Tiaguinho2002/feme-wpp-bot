@@ -22,7 +22,7 @@ export const help: Command = {
   - Marca todos os membros do grupo para assuntos importantes.
   -_Modo de uso:_ Lance !todos para realizar a marcação.
 
-✅*quem-ta-certo*
+✅*!quem-ta-certo*
   - Pega o conteúdo dos assuntos falados e da a opinião sobre quem está certo!
   -_Modo de uso:_ Lance !quem-ta-certo para realizar a análise da Feme sobre seus debates.
 ---

@@ -13,6 +13,7 @@ import { Command, CommandContext } from "./types/command.js";
 
 import dotenv from "dotenv";
 import { GeminiService } from "./services/GeminiService.js";
+import { prompts } from "./prompts.js";
 
 dotenv.config();
 
@@ -29,17 +30,17 @@ const commands = new Map<string, Command>([
 
 const client = new Client({
   authStrategy: new LocalAuth(),
-      puppeteer: {
-        args: [
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage',
-            '--disable-accelerated-2d-canvas',
-            '--no-first-run',
-            '--no-zygote',
-            '--disable-gpu'
-        ]
-    }
+  puppeteer: {
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-accelerated-2d-canvas",
+      "--no-first-run",
+      "--no-zygote",
+      "--disable-gpu",
+    ],
+  },
 });
 
 let botNumber = "";
@@ -80,10 +81,11 @@ client.on("message_create", async (msg) => {
 
           // Remove @
           const prompt = text.replace(/@\d+/g, "").trim();
+          const promptsText = prompts.universalPrompt(prompt);
 
           console.log(`📝 Prompt limpo: "${prompt}"`);
 
-          if (!prompt || prompt.trim().length === 0) {
+          if (!promptsText || promptsText.trim().length === 0) {
             await msg.reply("Você me mencionou mas não perguntou nada! 🤔");
             return;
           }
@@ -92,7 +94,9 @@ client.on("message_create", async (msg) => {
 
           try {
             const geminiService = new GeminiService();
-            const aiResponse = await geminiService.generateResponse(prompt);
+            const aiResponse = await geminiService.generateResponse(
+              promptsText
+            );
             console.log(`✅ Resposta da IA: "${aiResponse}"`);
 
             if (!aiResponse || aiResponse.trim().length === 0) {
@@ -113,6 +117,36 @@ client.on("message_create", async (msg) => {
       }
     } catch (error) {
       console.error("❌ Erro ao verificar menções:", error);
+    }
+  }
+
+  // reply via quote mention
+  if (chat.isGroup) {
+    if (ctx.msg.fromMe) return; 
+
+    try {
+      const mention = await ctx.msg.getQuotedMessage();
+      if (mention) {
+        const mentionContact = await mention.getContact();
+
+        
+        if (mentionContact.id.user === botNumber) {
+          console.log("🤖 Bot foi mencionado via reply!");
+
+          const userMessage = ctx.msg.body || "";
+          const promptsText = prompts.universalPrompt(userMessage);
+
+          console.log(`📝 Mensagem do usuário: "${userMessage}"`);
+
+          const geminiService = new GeminiService();
+          const aiResponse = await geminiService.generateResponse(promptsText);
+          console.log(`✅ Resposta da IA: "${aiResponse}"`);
+
+          await ctx.msg.reply(aiResponse);
+        }
+      }
+    } catch (error) {
+      console.error("❌ Erro ao verificar menções por reply:", error);
     }
   }
 

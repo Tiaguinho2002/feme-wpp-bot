@@ -1,7 +1,7 @@
-# Use uma imagem base com suporte ao Puppeteer
+# Use a base image with Puppeteer support
 FROM node:20
 
-# Instala dependências necessárias para o Chromium/Puppeteer
+# Installs necessary dependencies for Chromium/Puppeteer
 RUN apt-get update && apt-get install -y \
     wget \
     ca-certificates \
@@ -27,26 +27,26 @@ RUN apt-get update && apt-get install -y \
     --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
-# Define o diretório de trabalho
+# Defines the working directory
 WORKDIR /app
 
-# Copia arquivos de dependências
+# Copies dependency files
 COPY package*.json ./
 
-# Instala todas as dependências
+# Installs all dependencies
 RUN npm ci
 
-# Copia o resto do projeto
+# Copies the rest of the project
 COPY . .
 
-# Faz o build (se necessário)
+# Performs the build (if necessary)
 RUN npm run build
 
-# Remove devDependencies
+# Removes devDependencies
 RUN npm prune --production
 
-# Expõe a porta
+# Exposes the port
 EXPOSE 3000
 
-# Inicia a aplicação
+# Starts the application
 CMD ["node", "dist/main.js"]
